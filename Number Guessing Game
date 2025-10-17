@@ -1,55 +1,37 @@
 #include <iostream>
-#include <bits/stdc++.h>
+#include <cstdlib> 
+#include <ctime>     
 using namespace std;
-class GuessGame 
-{
-private:
-    int a, b;
-public:
-    bool Guess(int guessnumber, int usernumber)
-    {
-        a = guessnumber;
-        b = usernumber;
-        if (a < b)
-        {
-            cout << "Number is lower than the guessed number";
-            return false;
-        }
-        else if (a > b)
-        {
-            cout <<"Number is higher than the guessed number";
-            return false;
-        }
-        else
-        {
-            cout<<"Congratulations!You have guessed it right";
-            return true; 
-        }
-    }
-};
 
-int main()
-{
-    GuessGame g;
-    int attempts;
-    cout << "Enter number of attempts: ";
-    cin >> attempts;
-    int Guessnum;
-    cout << "Enter number that is to be guessed: ";
-    cin >> Guessnum;
-    for (int i = 0; i < attempts; i++)
-    {
-        int usernum;
-        cout << "Enter your guess (between 1 to 100): ";
-        cin >> usernum;
-        if (g.Guess(Guessnum, usernum))
-        {
+int main() {
+    srand(time(0));
+    int secretNumber = rand() % 100 + 1;
+    int guess;
+    int attempts = 0;
+
+    cout<<"Welcome to the Number Guessing Game!"<< endl;
+    cout<<"I have chosen a number between 1 and 100."<< endl;
+    cout<<"Can you guess it?"<<endl;
+
+    while (true) {
+        cout<<"Enter your guess: ";
+        cin>>guess;
+        attempts++;
+
+        if (guess == secretNumber) {
+            cout<<"Congratulations!You guessed the number in " 
+                 <<attempts<<"attempts!"<<endl;
             break;
-        }
-        if (i == attempts - 1)
-        {
-            cout << "Out of attempts! Better luck next time.";
+        } 
+        else if (guess > secretNumber) {
+            cout<<"Too high! Try again.";
+        } 
+        else {
+            cout<<"Too low! Try again.";
         }
     }
+
+    cout<<"Thanks for playing"<<endl;
     return 0;
 }
+
