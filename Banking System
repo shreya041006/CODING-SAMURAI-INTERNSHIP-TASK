@@ -1,0 +1,145 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+using namespace std;
+
+class BankingSystem
+{
+private:
+    string holders_Name;
+    string account_Number;
+    double balance;
+
+public:
+   
+    void createAccount(string s, string a, double initial)
+    {
+        holders_Name = s;
+        account_Number = a;
+        balance = initial;
+
+        ofstream file("bankdata.txt", ios::app);
+        if (file.is_open())
+        {
+            file << holders_Name << " " << account_Number << " " << balance << endl;
+            file.close();
+        }
+
+        cout << "\nAccount Created Successfully for " << holders_Name << "!\n";
+    }
+
+
+    void deposit(double amount)
+    {
+        balance += amount;
+        cout << " Deposited " << amount << ". New Balance: " << balance << endl;
+        updateFile();
+    }
+
+   
+    void withdraw(double amount)
+    {
+        if (amount <= balance)
+        {
+            balance -= amount;
+            cout << " Withdrawn " << amount << ". Remaining Balance: " << balance << endl;
+            updateFile();
+        }
+        else
+        {
+            cout << "Insufficient funds!\n";
+        }
+    }
+
+    void checkBalance()
+    {
+        cout << "Account Holder: " << holders_Name << endl;
+        cout << "Account Number: " << account_Number << endl;
+        cout << "Current Balance: " << balance << "\n";
+    }
+
+    
+    void transfer(BankingSystem &receiver, double amount)
+    {
+        if (amount <= balance)
+        {
+            balance -= amount;
+            receiver.balance += amount;
+            cout << "Transferred " << amount << " from " << holders_Name
+                 << " to " << receiver.holders_Name << endl;
+
+            updateFile();
+            receiver.updateFile();
+        }
+        else
+        {
+            cout << " Transfer failed — Insufficient balance!\n";
+        }
+    }
+
+    
+    void updateFile()
+    {
+        
+        ifstream infile("bankdata.txt");
+        vector<string> names, accounts;
+        vector<double> balances;
+        string n, acc;
+        double b;
+
+        while (infile >> n >> acc >> b)
+        {
+            if (acc == account_Number)
+                b = balance;
+            names.push_back(n);
+            accounts.push_back(acc);
+            balances.push_back(b);
+        }
+        infile.close();
+        ofstream outfile("bankdata.txt");
+        for (int i = 0; i < names.size(); i++)
+        {
+            outfile << names[i] << " " << accounts[i] << " " << balances[i] << endl;
+        }
+        outfile.close();
+    }
+    bool loadAccount(string acc_no)
+    {
+        ifstream file("bankdata.txt");
+        string n, a;
+        double b;
+        while (file >> n >> a >> b)
+        {
+            if (a == acc_no)
+            {
+                holders_Name = n;
+                account_Number = a;
+                balance = b;
+                file.close();
+                return true;
+            }
+        }
+        file.close();
+        return false;
+    }
+};
+
+int main()
+{
+    BankingSystem acc1, acc2;
+
+  
+    acc1.createAccount("Shreya", "1001", 5000);
+    acc2.createAccount("Aarav", "1002", 3000);
+
+
+    acc1.deposit(1000);
+    acc2.withdraw(500);
+    acc1.transfer(acc2, 2000);
+
+    
+    acc1.checkBalance();
+    acc2.checkBalance();
+
+    return 0;
+}
